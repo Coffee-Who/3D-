@@ -1,22 +1,29 @@
 import streamlit as st
-from streamlit_gsheets import GSheetsConnection
+
+ from streamlit_gsheets import GSheetsConnection
 
 st.set_page_config(layout="wide")
-st.title("階段 2.5：DataFrame 數據單點座標拆解實驗")
+
+st.title(" 階段 3.5：iterrows 迴圈解構點名現場實驗") 
+
 st.caption("授權標註：edit by 闕河正")
 
-conn = st.connection("gsheets", type=GSheetsConnection)
+conn = st.connection("gsheets", type=GSheetsConnection) 
+
 df = conn.read(worksheet="Tasks", ttl="0")
 
-st.write("### 目前的雲端原始表格：")
-st.dataframe(df)
+todo_df = df[df["status"] == "To Do"]
 
-st.write("---")
-st.write("### 精準座標抽離實驗：")
+st.write("---") 
 
-# 使用 .loc[行號, 欄位名] 精準抓取特定格子
-first_title = df.loc[0, "title"]
-first_owner = df.loc[0, "owner"]
+st.write("###  進入 Python 迴圈自動化點名現場：")
 
-st.write(f"機器人回報：我們發現第 0 列（第一行任務）的名稱是：**{first_title}**")
-st.write(f"機器人回報：這一行的負責人是：**{first_owner}**")
+for idx, row in todo_df.iterrows(): 
+
+    # 每一圈，我們用一個小紅框（st.error）來代表一次巡迴 
+
+    st.error(f" 迴圈巡邏：目前點名點到了第 {idx} 行的任務：") 
+
+    st.write(f" ➔ 【title 任務名稱】這一格拿到了： {row['title']}") 
+
+    st.write(f" ➔ 【owner 負責人】這一格拿到了： {row['owner']}")
